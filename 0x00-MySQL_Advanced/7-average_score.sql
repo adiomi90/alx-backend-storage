@@ -1,4 +1,5 @@
 -- Stored procedure to compute and store average score for a user
+DROP procedure IF EXISTS ComputeAverageScoreForUser;
 DELIMITER //
 
 CREATE PROCEDURE ComputeAverageScoreForUser(IN user_id INT)
