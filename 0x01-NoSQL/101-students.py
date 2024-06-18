@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """ A utility function that sorts students by average score """
-import pymongo
 
 
 def top_students(mongo_collection):
