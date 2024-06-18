@@ -16,10 +16,17 @@ if __name__ == "__main__":
     print(f"{status_count} status check")
     print("IPs:")
     topIps = col.aggregate([
-        {"$group": {"_id": "$ip", "count": {"$sum": 1}}},
+        {"$group":
+            {"_id": "$ip",
+             "count": {"$sum": 1}
+             }},
         {"$sort": {"count": -1}},
         {"$limit": 10},
-        {"$project": {"ip": "$_id", "count": 1, "_id": 0}}
+        {"$project": {
+            "_id": 0,
+            "ip": "$_id",
+            "count": 1
+        }}
     ])
     for ip in topIps:
-        print(f"\tip: {ip['ip']}: {ip['count']}")
+        print(f"\t:{ip['ip']}: {ip['count']}")
