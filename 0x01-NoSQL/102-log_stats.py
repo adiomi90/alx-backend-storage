@@ -1,25 +1,24 @@
 #!/usr/bin/env python3
-""" A script that provides some stats about Nginx logs stored in MongoDB """
+""" This script shows the stats for the Nginx logsg"""
 from pymongo import MongoClient
 
 
 if __name__ == "__main__":
-    # Connect to the MongoDB server running on localhost at port 27017
     client = MongoClient('mongodb://127.0.0.1:27017')
-    db = client.logs.nginx
-    print(f"{col.estimated_document_count()} logs")
+    col = client.logs.nginx
+    print("{} logs".format(col.estimated_document_count()))
     print("Methods:")
     for method in ["GET", "POST", "PUT", "PATCH", "DELETE"]:
-        count = col.count_documents({"method": method})
-        print(f"\tmethod {method}: {count}")
-    status_count = col.count_documents({"method": "GET", "path": "/status"})
-    print(f"{status_count} status check")
+        count = col.count_documents({'method': method})
+        print("\tmethod {}: {}".format(method, count))
+    status_get = col.count_documents({'method': 'GET', 'path': "/status"})
+    print("{} status check".format(status_get))
     print("IPs:")
     topIps = col.aggregate([
-        {"$group":
-            {"_id": "$ip",
-             "count": {"$sum": 1}
-             }},
+        {"$group": {
+            "_id": "$ip",
+            "count": {"$sum": 1}
+        }},
         {"$sort": {"count": -1}},
         {"$limit": 10},
         {"$project": {
@@ -29,4 +28,4 @@ if __name__ == "__main__":
         }}
     ])
     for ip in topIps:
-        print(f"\t:{ip['ip']}: {ip['count']}")
+        print("\t{}: {}".format(ip.get('ip'), ip.get('count')))
