@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-""" caching and tracking. """
+""" A module with tools for request caching and tracking. """
 import requests
 import redis
 
 
 def get_page(url: str) -> str:
     """
-    Returns the content of a URL after caching the request's response
+    Returns the content of a URL after caching the request's response,
+    and tracking the request.
     """
     r = redis.Redis()
     count_key = f"count:{url}"
