@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 """ stats about Nginx logs """
+
+
+
+
+import pymongo
 from pymongo import MongoClient
 
 
