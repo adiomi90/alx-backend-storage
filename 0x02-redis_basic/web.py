@@ -1,39 +1,27 @@
 #!/usr/bin/env python3
-"""Module to fetch and cache a webpage's HTML content using Redis."""
-import redis
+""" caching and tracking. """
 import requests
-from functools import wraps
-
-r = redis.Redis()
+import redis
 
 
-def url_access_count(method):
-    """decorator for get_page function"""
-    @wraps(method)
-    def wrapper(url):
-        """wrapper function"""
-        key = "cached:" + url
-        cached_value = r.get(key)
-        if cached_value:
-            return cached_value.decode("utf-8")
-
-            # Get new content and update cache
-        key_count = "count:" + url
-        html_content = method(url)
-
-        r.incr(key_count)
-        r.set(key, html_content, ex=10)
-        r.expire(key, 10)
-        return html_content
-    return wrapper
-
-
-@url_access_count
 def get_page(url: str) -> str:
-    """obtain the HTML content of a particular"""
-    results = requests.get(url)
-    return results.text
-
-
-if __name__ == "__main__":
-    get_page('http://slowwly.robertomurray.co.uk')
+    """
+    Returns the content of a URL after caching the request's response
+    """
+    r = redis.Redis()
+    count_key = f"count:{url}"
+    count = r.get(count_key)
+    if count is None:
+        count = 0
+    else:
+        count = int(count)
+    count += 1
+    r.set(count_key, count, ex=10)
+    cache_key = f"cached:{url}"
+    cached_content = r.get(cache_key)
+    if cached_content:
+        return cached_content.decode("utf-8")
+    response = requests.get(url)
+    html_content = response.text
+    r.set(cache_key, html_content, ex=10)
+    return html_content
