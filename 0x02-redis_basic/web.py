@@ -5,9 +5,8 @@ A module with tools for request caching and tracking.
 
 import requests
 import redis
-from functools import wraps
 from typing import Callable
-
+from functools import wraps
 
 # Initialize Redis connection
 r = redis.Redis()
@@ -58,8 +57,8 @@ def get_page(url: str) -> str:
 
 if __name__ == "__main__":
     # Test with http://slowwly.robertomurray.co.uk to simulate a slow response
-    test_url = "http://slowwly.robertomurray.co.uk/\
-                delay/5000/url/http://www.google.com"
+    test_url = "http://slowwly.robertomurray.co.uk/delay/\
+                5000/url/http://www.google.com"
     print(get_page(test_url))
 
     # Print count to verify increment
