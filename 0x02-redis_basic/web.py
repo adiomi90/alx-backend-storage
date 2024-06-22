@@ -5,11 +5,15 @@ A module with tools for request caching and tracking.
 
 import requests
 import redis
-from typing import Callable
 from functools import wraps
+from typing import Callable
 
 # Initialize Redis connection
-r = redis.Redis()
+try:
+    r = redis.Redis()
+    r.ping()  # Test connection
+except redis.ConnectionError:
+    raise RuntimeError("Failed to connect to Redis. Make sure Redis is running on localhost:6379.")
 
 
 def cache_page(func: Callable) -> Callable:
